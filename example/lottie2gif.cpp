@@ -90,7 +90,7 @@ public:
         auto buffer = std::unique_ptr<uint32_t[]>(new uint32_t[w * h]);
         size_t frameCount = player->totalFrame();
 
-        GifBuilder builder((gifDir + gifName).data(), w, h, bgColor);
+        GifBuilder builder((gifDir + getPathDelimiter() + gifName).data(), w, h, bgColor);
         for (size_t i = 0; i < frameCount ; i++) {
             rlottie::Surface surface(buffer.get(), w, h, w * 4);
             player->renderSync(i, surface);
@@ -151,12 +151,12 @@ private:
         return str.substr(0, str.find_last_of("/\\"));
     }
 
-    char getPathDelimiter()
+    std::string getPathDelimiter()
     {
 #ifdef _WIN32
-        return '\\';
+        return "\\";
 #else
-        return '/';
+        return "/";
 #endif
     }
 
