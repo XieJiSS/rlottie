@@ -90,7 +90,7 @@ public:
         auto buffer = std::unique_ptr<uint32_t[]>(new uint32_t[w * h]);
         size_t frameCount = player->totalFrame();
 
-        GifBuilder builder(gifName.data(), w, h, bgColor);
+        GifBuilder builder((gifDir + gifName).data(), w, h, bgColor);
         for (size_t i = 0; i < frameCount ; i++) {
             rlottie::Surface surface(buffer.get(), w, h, w * 4);
             player->renderSync(i, surface);
@@ -135,6 +135,8 @@ public:
 
         gifName = basename(fileName);
         gifName.append(".gif");
+
+        gifDir = dirname(path);
         return 0;
     }
 
@@ -142,6 +144,20 @@ private:
     std::string basename(const std::string &str)
     {
         return str.substr(str.find_last_of("/\\") + 1);
+    }
+
+    std::string dirname(const std::string &str)
+    {
+        return str.substr(0, str.find_last_of("/\\"));
+    }
+
+    char getPathDelimiter()
+    {
+#ifdef _WIN32
+        return '\\';
+#else
+        return '/';
+#endif
     }
 
     bool jsonFile() {
@@ -154,12 +170,12 @@ private:
     }
 
     int result() {
-        std::cout<<"Generated GIF file : "<<gifName<<std::endl;
+        std::cout << "Generated GIF file: " << gifDir << getPathDelimiter() << gifName << std::endl;
         return 0;
     }
 
     int help() {
-        std::cout<<"Usage: \n   lottie2gif [lottieFileName] [Resolution] [bgColor]\n\nExamples: \n    $ lottie2gif input.json\n    $ lottie2gif input.json 200x200\n    $ lottie2gif input.json 200x200 ff00ff\n\n";
+        std::cout << "Usage: \n   lottie2gif [lottieFileName] [Resolution] [bgColor]\n\nExamples: \n    $ lottie2gif input.json\n    $ lottie2gif input.json 200x200\n    $ lottie2gif input.json 200x200 ff00ff\n" << std::endl;
         return 1;
     }
 
@@ -167,6 +183,7 @@ private:
     int bgColor = 0xffffffff;
     std::string fileName;
     std::string gifName;
+    std::string gifDir;
 };
 
 int
