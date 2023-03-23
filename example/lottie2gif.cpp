@@ -19,6 +19,7 @@ public:
                         const uint32_t height, const int bgColor=0xffffffff, const uint32_t delay = 2)
     {
         GifBegin(&handle, fileName.c_str(), width, height, delay);
+        _bgColor = bgColor;
         bgColorR = (uint8_t) ((bgColor & 0xff0000) >> 16);
         bgColorG = (uint8_t) ((bgColor & 0x00ff00) >> 8);
         bgColorB = (uint8_t) ((bgColor & 0x0000ff));
@@ -34,7 +35,10 @@ public:
                       reinterpret_cast<uint8_t *>(s.buffer()),
                       s.width(),
                       s.height(),
-                      delay);
+                      delay,
+                      8,
+                      false,
+                      _bgColor);
     }
     void argbTorgba(rlottie::Surface &s)
     {
@@ -73,6 +77,7 @@ public:
 private:
     GifWriter      handle;
     uint8_t bgColorR, bgColorG, bgColorB;
+    int _bgColor;
 };
 
 class App {
